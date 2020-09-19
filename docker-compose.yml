@@ -1,0 +1,82 @@
+version: '3'
+services:
+  elasticsearch-node1:
+    build: elasticsearch-node1-docker
+    image: elasticsearch/node1
+    restart: unless-stopped
+    container_name: elasticsearch-node1
+    environment:
+      - cluster.name=elasticsearch-cluster
+      - node.name=elasticsearch-node1
+      - discovery.seed_hosts=versprite-node1,versprite-node2
+      - cluster.initial_master_nodes=versprite-node1,versprite-node2
+      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      - network.host=0.0.0.0
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536 # maximum number of open files for the Elasticsearch user, set to at least 65536 on modern systems
+        hard: 65536
+    volumes:
+      - ./elasticsearch-node1/data:/usr/share/elasticsearch/data
+      - ./elasticsearch-node1/securityconfig:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/
+    ports:
+      - 9200:9200
+      - 9600:9600 # required for Performance Analyzer
+    networks:
+      - elasticsearch
+  elasticsearch-node2:
+  build: elasticsearch-node2-docker
+  image: elasticsearch/node2
+  restart: unless-stopped
+  container_name: elasticsearch-node2
+  environment:
+    - cluster.name=elasticsearch-cluster
+    - node.name=elasticsearch-node2
+    - discovery.seed_hosts=elasticsearch-node1,elasticsearch-node2
+    - cluster.initial_master_nodes=elasticsearch-node1,elasticsearch-node2
+    - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+    - network.host=0.0.0.0
+  ulimits:
+    memlock:
+      soft: -1
+      hard: -1
+    nofile:
+      soft: 65536 # maximum number of open files for the Elasticsearch user, set to at least 65536 on modern systems
+      hard: 65536
+  volumes:
+    - ./elasticsearch-node2/data:/usr/share/elasticsearch/data
+    - ./elasticsearch-node2/securityconfig:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/
+  networks:
+    - elasticsearch
+  kibana:
+    image: amazon/opendistro-for-elasticsearch-kibana:1.9.0
+    container_name: kibana
+    ports:
+      - 5601:5601
+    expose:
+      - "5601"
+    environment:
+      ELASTICSEARCH_URL: https://elasticsearch-node1:9200
+      ELASTICSEARCH_HOSTS: https://elasticsearch-node1:9200
+      SERVER_SSL_ENABLED: "true"
+      SERVER_SSL_KEY: /usr/share/kibana/config/kibana-key.pem
+      SERVER_SSL_CERTIFICATE: /usr/share/kibana/config/kibana.pem
+    volumes:
+      #- ./configs/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ./ssl/root-ca.pem:/usr/share/kibana/config/root-ca.pem
+      - ./ssl/kibana.pem:/usr/share/kibana/config/kibana.pem
+      - ./ssl/kibana-key.pem:/usr/share/kibana/config/kibana-key.pem
+      #- /production/kibana/kibana.yml:/user/share/kibana/config/kibana.yml:ro
+    networks:
+      - elasticsearch
+volumes:
+  elasticsearch-node1:
+  elasticsearch-node2:
+
+networks:
+  elasticsearch:
