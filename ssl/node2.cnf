@@ -4,14 +4,14 @@ distinguished_name = req_distinguished_name
 req_extensions     = req_ext
 prompt = no
 [ req_distinguished_name ]
-countryName                 = country
-stateOrProvinceName         = state
+countryName                 = US
+stateOrProvinceName         = ST
 localityName               = city
-organizationName           = name
-commonName                 = example.node1
+organizationName           = eminent
+commonName                 = elasticsearch.node2
 [ req_ext ]
 subjectAltName = @alt_names
 [alt_names]
-DNS.1   = example.com
-DNS.2   = example.node2
-DNS.3   = example.kibana
+DNS.1   = elasticsearch-node1
+DNS.2   = elasticsarch-node2
+DNS.3   = kibana

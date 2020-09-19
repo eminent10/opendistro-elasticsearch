@@ -31,10 +31,10 @@ opendistro_security.ssl.http.pemtrustedcas_filepath: root-ca.pem
 opendistro_security.allow_default_init_securityindex: true
 opendistro_security.ssl.transport.enforce_hostname_verification: false
 opendistro_security.authcz.admin_dn:
-  - "CN=admin,O=eminent,L=ATLANTA,ST=GA,C=US"
+  - "CN=admin,O=eminent,L=city,ST=ST,C=US"
 opendistro_security.nodes_dn:
-  - "CN=node1,O=eminent,L=ATLANTA,ST=GA,C=US"
-  - "CN=node2,O=eminent,L=city,ST=st,C=US"
+  - "CN=elasticsearch-node1,O=eminent,L=city,ST=ST,C=US"
+  - "CN=elasticsearch-node2,O=eminent,L=city,ST=ST,C=US"
 opendistro_security.audit.type: internal_elasticsearch
 #opendistro_security.ssl.http.clientauth_mode: require
 opendistro_security.enable_snapshot_restore_privilege: true
