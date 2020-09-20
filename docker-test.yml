@@ -1,7 +1,7 @@
 version: '3'
 services:
   elasticsearch-node1:
-    build: elasticsearch-node1-docker
+    build: ./elasticsearch-node1/elasticsearch-node1-docker
     image: elasticsearch/node1
     restart: unless-stopped
     container_name: elasticsearch-node1
@@ -22,37 +22,40 @@ services:
         hard: 65536
     volumes:
       - ./elasticsearch-node1/data1:/usr/share/elasticsearch/data
-      - ./elasticsearch-node1/securityconfig:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/
+      - ./supplements/netty-tcnative-openssl-1.1.0j-static-2.0.20.Final-fedora-linux-x86_64.jar:/usr/share/elasticsearch/plugins/opendistro_security/netty-tcnative-openssl-1.1.0j-static-2.0.20.Final-fedora-linux-x86_64.jar
+        #- ./elasticsearch-node1/securityconfig:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/
+      - ./supplements/performance-analyzer.properties:/usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.proper    ties
     ports:
       - 9200:9200
       - 9600:9600 # required for Performance Analyzer
     networks:
-      - elasticsearch
+      - elasticsearch-net
   elasticsearch-node2:
-    build: elasticsearch-node2-docker
+    build: ./elasticsearch-node2/elasticsearch-node2-docker
     image: elasticsearch/node2
-    restart: unless-stopped
     container_name: elasticsearch-node2
     environment:
       - cluster.name=elasticsearch-cluster
       - node.name=elasticsearch-node2
       - discovery.seed_hosts=elasticsearch-node1,elasticsearch-node2
       - cluster.initial_master_nodes=elasticsearch-node1,elasticsearch-node2
-      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - network.host=0.0.0.0
     ulimits:
       memlock:
         soft: -1
         hard: -1
       nofile:
-        soft: 65536 # maximum number of open files for the Elasticsearch user, set to at least 65536 on modern systems
+        soft: 65536
         hard: 65536
-    volumes:
-      - ./elasticsearch-node2/data2:/usr/share/elasticsearch/data
-      - ./elasticsearch-node2/securityconfig:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/
+    volumes:  
+      - ./elasticsearch-node1/data1:/usr/share/elasticsearch/data
+      - ./supplements/netty-tcnative-openssl-1.1.0j-static-2.0.20.Final-fedora-linux-x86_64.jar:/usr/share/elasticsearch/plugins/opendistro_security/netty-tcnative-openssl-1.1.0j-static-2.0.20.Final-fedora-linux-x86_64.jar
+        #- ./elasticsearch-node2/securityconfig:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/
+      - ./supplements/performance-analyzer.properties:/usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties  
     networks:
-      - elasticsearch
+      - elasticsearch-net
   kibana:
     image: amazon/opendistro-for-elasticsearch-kibana:1.9.0
     container_name: kibana
@@ -71,12 +74,12 @@ services:
       - ./ssl/root-ca.pem:/usr/share/kibana/config/root-ca.pem
       - ./ssl/kibana.pem:/usr/share/kibana/config/kibana.pem
       - ./ssl/kibana-key.pem:/usr/share/kibana/config/kibana-key.pem
-      #- /production/kibana/kibana.yml:/user/share/kibana/config/kibana.yml:ro
     networks:
-      - elasticsearch
+      - elasticsearch-net
 volumes:
-  elasticsearch-node1:
-  elasticsearch-node2:
+  elasticsearch-data1:
+  elasticsearch-data2:
 
 networks:
-  elasticsearch:
+  elasticsearch-net:
+ 

@@ -25,5 +25,5 @@ openssl pkcs8 -inform PEM -outform PEM -in kibana-key-temp.pem -topk8 -nocrypt -
 openssl req -new -key kibana-key.pem -out kibana.csr -config kibana.cnf
 openssl x509 -req -in kibana.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out kibana.pem -extfile kibana.cnf
 
-cp {root-ca.pem,root-ca-key.pem,node1.pem,node1-key.pem,admin.pem,admin-key.pem} ../elasticsearch-node1-docker/
-cp {root-ca.pem,root-ca-key.pem,node2.pem,node2-key.pem,admin.pem,admin-key.pem} ../elasticsearch-node2-docker/
+cp {root-ca.pem,root-ca-key.pem,node1.pem,node1-key.pem,admin.pem,admin-key.pem} ../elasticsearch-node1/elasticsearch-node1-docker/
+cp {root-ca.pem,root-ca-key.pem,node2.pem,node2-key.pem,admin.pem,admin-key.pem} ../elasticsearch-node2/elasticsearch-node2-docker/
