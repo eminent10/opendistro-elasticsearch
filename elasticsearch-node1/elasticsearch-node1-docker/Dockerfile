@@ -6,3 +6,4 @@ COPY --chown=elasticsearch:elasticsearch root-ca.pem /usr/share/elasticsearch/co
 COPY --chown=elasticsearch:elasticsearch root-ca-key.pem /usr/share/elasticsearch/config/
 COPY --chown=elasticsearch:elasticsearch admin.pem /usr/share/elasticsearch/config/
 COPY --chown=elasticsearch:elasticsearch admin-key.pem /usr/share/elasticsearch/config/
+COPY --chown=elasticsearch:elasticsearch kickoff.sh /usr/share/elasticsearch/

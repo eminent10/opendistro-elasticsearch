@@ -14,4 +14,4 @@ subjectAltName = @alt_names
 [alt_names]
 DNS.1   = elasticsearch-node2
 DNS.2   = elasticsearch-node1
-DNS.2   = kibana
+DNS.3   = kibana
